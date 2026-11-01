@@ -1,10 +1,18 @@
 const content = window.SIYU_CONTENT;
 function el(tag, cls, text) { const node = document.createElement(tag); if (cls) node.className = cls; if (text) node.textContent = text; return node; }
+function externalArrow() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 20 20'); svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M4 16 16 4M4 4h12v12'); path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'currentColor'); path.setAttribute('stroke-width', '1.3');
+  svg.append(path); return svg;
+}
 function workLink(url, label) {
   if (url) {
     try { const parsed = new URL(url); if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') throw new Error(); }
     catch { return el('span', 'link-pending', '原作链接待补充'); }
-    const a = el('a', 'text-link', label + ' ↗'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a;
+    const a = el('a', 'text-link', label); a.append(externalArrow()); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a;
   }
   return el('span', 'link-pending', '原作链接待补充');
 }
@@ -31,7 +39,7 @@ content.shorts.forEach((work, index) => {
   const info = el('div', 'short-info');
   info.append(el('p', 'small-label', '短视频 / 微信视频号'), el('h3', '', work.title), el('p', 'short-subtitle', work.subtitle));
   const metric = el('p', 'metric-line', work.metrics.map(([value, label]) => value + ' ' + label).join(' · '));
-  info.append(metric, workLink(work.url, '观看短视频')); article.append(imageLink, info); document.querySelector('#short-list').append(article);
+  info.append(metric); if (work.focus) info.append(el('p', 'short-focus', work.focus)); info.append(workLink(work.url, '观看短视频')); article.append(imageLink, info); document.querySelector('#short-list').append(article);
 });
 const albumImage = document.querySelector('#album-image'), albumCaption = document.querySelector('#album-caption'), albumCounter = document.querySelector('#album-counter');
 let albumIndex = 0;
@@ -93,29 +101,58 @@ function showViewerPhoto(index) {
   document.querySelector('#photo-viewer-counter').textContent = (activePhotoIndex + 1) + ' / ' + photos.length;
 }
 function openPhoto(group, index) {
-  viewerTrigger = document.activeElement; activePhotoGroup = group; showViewerPhoto(index); viewer.showModal();
+  viewerTrigger = document.activeElement; activePhotoGroup = group; showViewerPhoto(index); viewer.showModal(); document.documentElement.classList.add('photo-modal-open');
 }
 journeyImages.forEach((img, index) => {
-  const button = el('button', 'journey-photo-button'); button.type = 'button'; button.title = '双击放大；手机轻点查看'; button.setAttribute('aria-label', '放大照片：' + img.alt);
+  const button = el('button', 'journey-photo-button'); button.type = 'button'; button.title = '轻点放大照片'; button.setAttribute('aria-label', '放大照片：' + img.alt);
   img.before(button); button.append(img);
-  button.addEventListener('dblclick', () => openPhoto('journey', index));
-  button.addEventListener('click', event => { if (event.detail === 0 || window.matchMedia('(hover: none), (max-width: 640px)').matches) openPhoto('journey', index); });
+  button.addEventListener('click', () => openPhoto('journey', index));
 });
 document.querySelector('#photo-viewer-close').addEventListener('click', () => viewer.close());
 document.querySelector('#photo-viewer-prev').addEventListener('click', () => showViewerPhoto(activePhotoIndex - 1));
 document.querySelector('#photo-viewer-next').addEventListener('click', () => showViewerPhoto(activePhotoIndex + 1));
 viewer.addEventListener('keydown', event => { if (event.key === 'ArrowRight') { event.preventDefault(); showViewerPhoto(activePhotoIndex + 1); } if (event.key === 'ArrowLeft') { event.preventDefault(); showViewerPhoto(activePhotoIndex - 1); } });
 viewer.addEventListener('click', event => { if (event.target === viewer) viewer.close(); });
-viewer.addEventListener('close', () => { viewerImage.removeAttribute('src'); viewerTrigger?.focus(); });
+viewer.addEventListener('close', () => { document.documentElement.classList.remove('photo-modal-open'); viewerImage.removeAttribute('src'); viewerTrigger?.focus({preventScroll: true}); });
+let viewerTouch = null;
+viewerImage.addEventListener('touchstart', event => {
+  if (event.touches.length !== 1) { viewerTouch = null; return; }
+  const touch = event.changedTouches[0]; viewerTouch = {x: touch.clientX, y: touch.clientY};
+}, {passive: true});
+viewerImage.addEventListener('touchend', event => {
+  if (!viewerTouch) return;
+  const touch = event.changedTouches[0], dx = touch.clientX - viewerTouch.x, dy = touch.clientY - viewerTouch.y;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) showViewerPhoto(activePhotoIndex + (dx < 0 ? 1 : -1));
+  viewerTouch = null;
+}, {passive: true});
+viewerImage.addEventListener('touchcancel', () => { viewerTouch = null; }, {passive: true});
+photoGroups.album = content.album.map(photo => ({src: photo.src, label: photo.caption}));
+const albumOpen = el('button', 'album-open'); albumOpen.type = 'button'; albumOpen.setAttribute('aria-label', '放大当前生活照片');
+albumImage.before(albumOpen); albumOpen.append(albumImage); albumOpen.addEventListener('click', () => openPhoto('album', albumIndex));
 
 // Everyday experiences are visible immediately; photos may be enlarged independently.
 (content.daily || []).forEach((item, i) => {
   const card = el('article', 'daily-card');
   const photos = el('div','daily-photos');
   item.images.forEach((src,j) => { const button=el('button','daily-photo daily-photo-'+i); button.type='button'; button.setAttribute('aria-label','放大'+item.title+'第'+(j+1)+'张照片'); const img=el('img'); img.src=src; img.alt=item.title+(j?' · 手写细节':' · 本人实拍'); img.loading='lazy'; button.append(img); button.addEventListener('click',()=> { photoGroups.daily=item.images.map((src,k)=>({src,label:item.title+(k?' · 手写细节':' · 本人实拍')}));openPhoto('daily',j); });photos.append(button); });
-  const copy=el('div','daily-card-copy');copy.append(el('span','daily-number',String(i+1).padStart(2,'0')),el('h3','',item.title),el('p','daily-experience',item.body));card.append(photos,copy);document.querySelector('#daily-items').append(card);
+  const copy=el('div','daily-card-copy');copy.append(el('span','daily-number',String(i+1).padStart(2,'0')),el('h3','',item.title)); if (item.showSummary && item.summary) copy.append(el('p','daily-summary',item.summary)); copy.append(el('p','daily-experience',item.body));card.append(photos,copy);document.querySelector('#daily-items').append(card);
 });
 photoGroups.build = [{src: 'assets/transcribe-app-v14.png', label: '视频逐字稿 · 实际运行界面'}];
 const buildVisual = document.querySelector('.build-visual');
 const buildImage = buildVisual.querySelector('img'), buildButton = el('button', 'build-preview'); buildButton.type = 'button'; buildButton.setAttribute('aria-label', '放大视频逐字稿实际界面'); buildImage.before(buildButton); buildButton.append(buildImage); buildButton.addEventListener('click', () => openPhoto('build', 0));
 
+
+const navGroups = [...navigation.querySelectorAll('.nav-group')];
+function closeNavGroups() { navGroups.forEach(group => { group.open = false; }); }
+navGroups.forEach(group => group.addEventListener('toggle', () => {
+  if (group.open) navGroups.filter(other => other !== group).forEach(other => { other.open = false; });
+}));
+navigation.addEventListener('click', event => { if (event.target.closest('a')) closeNavGroups(); });
+document.addEventListener('click', event => { if (!navigation.contains(event.target)) closeNavGroups(); });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    const group = document.activeElement.closest('.nav-group');
+    closeNavGroups();
+    if (group) group.querySelector('summary').focus();
+  }
+});

@@ -2,7 +2,9 @@ const archiveList = document.querySelector('#archive-list');
 function archiveNode(tag, cls, text) { const n = document.createElement(tag); if(cls)n.className=cls;if(text)n.textContent=text;return n; }
 function archiveLink(url,label) {
   const u=new URL(url);if(!['https:','http:'].includes(u.protocol))throw new Error('Unsupported work URL');
-  const a=archiveNode('a','text-link',label);a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';return a;
+  const a=archiveNode('a','text-link',label.replace(/\s*↗\s*$/u,''));a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';
+  if(label){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 20 20');svg.setAttribute('aria-hidden','true');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M4 16 16 4M4 4h12v12');path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','1.3');svg.append(path);a.append(svg);}
+  return a;
 }
 for(const group of [{title:'更多对话',works:window.SIYU_CONTENT.additionalInterviews || []},{title:'首页精选',works:window.SIYU_CONTENT.interviews || []}]) {
   if(!group.works.length)continue;

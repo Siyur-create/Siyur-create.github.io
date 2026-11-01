@@ -7,7 +7,7 @@ window.SIYU_CONTENT = {
       "name": "艺人经纪人孙杨",
       "category": "职业现场 / 人物访谈",
       "title": "聚光灯背后的人",
-      "description": "一次关于经纪人职业与个人选择的访谈",
+      "description": "艺人经纪人的入行成本、幕后劳动与职业边界",
       "url": "https://xhslink.cn/o/8dyTE2Oevug"
     },
     {
@@ -16,7 +16,7 @@ window.SIYU_CONTENT = {
       "name": "入殓师潘美丽",
       "category": "职业现场 / 人物访谈",
       "title": "走近一份特殊的职业",
-      "description": "听入殓师潘美丽讲述她的职业与生活",
+      "description": "选择殡葬行业后，如何面对职业忌讳与外界目光",
       "url": "https://xhslink.cn/o/6VVHyN7g2RH"
     },
     {
@@ -25,7 +25,7 @@ window.SIYU_CONTENT = {
       "name": "负家千金",
       "category": "人生转折 / 人物访谈",
       "title": "当生活重新开始",
-      "description": "关于家庭破产与人生转折的一次对话",
+      "description": "从家庭破产到凑钱开店，重新认识赚钱与责任",
       "url": "https://xhslink.cn/o/6BaKdmUGt7X"
     },
     {
@@ -33,7 +33,7 @@ window.SIYU_CONTENT = {
       "name": "永璞咖啡CEO毛栗子",
       "category": "人物故事 / 商业选择",
       "title": "人生的选择，也成为生意的选择",
-      "description": "从大学退学到CEO，她的经历和商业判断",
+      "description": "账上10万，为什么签下1.5亿对赌订单？",
       "cover": "assets/yongpu-frame-v6.png",
       "url": "https://xhslink.cn/o/99jS7w1m7fm"
     }
@@ -50,6 +50,10 @@ window.SIYU_CONTENT = {
         "▢ 1400+ 评论"
       ],
       "metrics": [
+        [
+          "4500+",
+          "点赞"
+        ],
         [
           "9000+",
           "转发"
@@ -73,6 +77,10 @@ window.SIYU_CONTENT = {
         "↗ 1600+ 转发"
       ],
       "metrics": [
+        [
+          "1400+",
+          "点赞"
+        ],
         [
           "1600+",
           "转发"
@@ -240,16 +248,14 @@ window.SIYU_CONTENT = {
   "daily": [
     {
       "title": "叶黄素胶囊",
-      "summary": "长时间用电脑，眼睛没那么干和累了",
-      "body": "我是高度近视，还有干眼症，长时间工作眼睛会很疲劳。这类叶黄素胶囊吃过不止一个牌子，现在买的是营养工厂。我会隔一段时间连着吃一阵，感觉眼睛会明显舒服一些。对我来说，几个牌子吃下来的感受差不多，所以没有那么执着于品牌。",
+      "body": "做内容需要长时间盯着屏幕，经常觉得眼睛干涩、酸胀，所以我一直很关注各种护眼产品。叶黄素胶囊我陆续尝试过几个品牌，现在用的是营养工厂。有时候会觉得眼睛舒服一些，但几个品牌之间的主观体验差异并不明显，所以我也没有特别执着于某一个牌子。",
       "images": [
         "assets/daily-lutein.webp"
       ]
     },
     {
       "title": "Finacea 壬二酸",
-      "summary": "试过一圈祛痘产品，终于让皮肤稳定下来的这一支",
-      "body": "这些年，我的唇周总是反反复复长闭口和痘痘，有时候还会发炎、冒脓。虽然不算严重，但总是反复，真的很影响心情。所有祛痘的方法我几乎都尝试过，涂的阿达帕林、夫西地酸、班赛等等，以及口服的异维 A 酸，各有各的缺点。涂的药控制不彻底，口服的药副作用明显。最后留下的是这支壬二酸：对我来说，刺激和使用负担都比较小，能坚持用，皮肤也稳定了很多，很少再反复起痘和闭口。我用的是澳版 Finacea，属于壬二酸原研药。",
+      "body": "在祛痘这件事上，我走过不少弯路，也尝试过各种不同的产品。后来用到了澳版 Finacea 壬二酸。据说是壬二酸的原研药，确实比我买的其他品牌都更好用。肤感不粘腻、闭口痘痘也很少了，皮肤变得更稳定了。",
       "images": [
         "assets/daily-azelaic.webp"
       ]
@@ -414,8 +420,8 @@ window.SIYU_CONTENT = {
     {
       "id": "pet-industry",
       "name": "宠嗒嗒创始人 王静静",
-      "category": "行业与生活 / 人物访谈",
-      "description": "两年投入一个亿，“宠物托运”是一门怎样的生意",
+      "category": "行业与生活",
+      "description": "两年投入一个亿，“宠物运输”是一门怎样的生意",
       "url": "https://xhslink.cn/o/8JyqpNucu2F",
       "person": "王静静",
       "role": "宠嗒嗒创始人",
